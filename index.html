@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Manila Map with Routing and Speed Indicator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet-ajax/dist/leaflet.ajax.js"></script>
+
+<script>
+    var map = L.map('map').setView([14.5995, 120.9842], 12); // Centered on Metro Manila
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // GeoJSON for Metro Manila Cities and Municipality
+    var metroManilaGeoJSON = {
+        "type": "FeatureCollection",
+        "features": [
+            { "type": "Feature", "properties": { "name": "Manila" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9729, 14.5995], [120.9820, 14.5955], [120.9900, 14.5855], [120.9960, 14.5770], [120.9729, 14.5995] ]] } },
+            { "type": "Feature", "properties": { "name": "Quezon City" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0551, 14.6749], [121.0607, 14.6615], [121.0804, 14.6490], [121.0913, 14.6372], [121.0551, 14.6749] ]] } },
+            { "type": "Feature", "properties": { "name": "Makati" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0224, 14.5633], [121.0302, 14.5509], [121.0404, 14.5418], [121.0451, 14.5302], [121.0224, 14.5633] ]] } },
+            { "type": "Feature", "properties": { "name": "Taguig" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0457, 14.5206], [121.0553, 14.5100], [121.0623, 14.5001], [121.0730, 14.4952], [121.0457, 14.5206] ]] } },
+            { "type": "Feature", "properties": { "name": "Parañaque" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9912, 14.5115], [121.0024, 14.4975], [121.0200, 14.4857], [121.0315, 14.4783], [120.9912, 14.5115] ]] } },
+            { "type": "Feature", "properties": { "name": "Mandaluyong" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0141, 14.5776], [121.0263, 14.5699], [121.0340, 14.5609], [121.0380, 14.5527], [121.0141, 14.5776] ]] } },
+            { "type": "Feature", "properties": { "name": "Pasig" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0672, 14.5822], [121.0785, 14.5705], [121.0859, 14.5602], [121.0932, 14.5520], [121.0672, 14.5822] ]] } },
+            { "type": "Feature", "properties": { "name": "Las Piñas" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9811, 14.4386], [120.9932, 14.4264], [121.0056, 14.4172], [121.0185, 14.4085], [120.9811, 14.4386] ]] } },
+            { "type": "Feature", "properties": { "name": "Caloocan" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9619, 14.6827], [120.9708, 14.6700], [120.9793, 14.6625], [120.9872, 14.6541], [120.9619, 14.6827] ]] } },
+            { "type": "Feature", "properties": { "name": "Malabon" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9487, 14.6604], [120.9595, 14.6499], [120.9670, 14.6408], [120.9750, 14.6323], [120.9487, 14.6604] ]] } },
+            { "type": "Feature", "properties": { "name": "Navotas" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9459, 14.6411], [120.9538, 14.6328], [120.9635, 14.6252], [120.9716, 14.6179], [120.9459, 14.6411] ]] } },
+            { "type": "Feature", "properties": { "name": "Valenzuela" }, "geometry": { "type": "Polygon", "coordinates": [[ [120.9595, 14.6785], [120.9693, 14.6665], [120.9789, 14.6582], [120.9863, 14.6489], [120.9595, 14.6785] ]] } },
+            { "type": "Feature", "properties": { "name": "San Juan" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0273, 14.6043], [121.0340, 14.5951], [121.0424, 14.5892], [121.0505, 14.5798], [121.0273, 14.6043] ]] } },
+            { "type": "Feature", "properties": { "name": "Pateros" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0460, 14.4552], [121.0593, 14.4452], [121.0735, 14.4358], [121.0812, 14.4295], [121.0460, 14.4552] ]] } },
+            { "type": "Feature", "properties": { "name": "Marikina" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0873, 14.6250], [121.0974, 14.6172], [121.1056, 14.6095], [121.1133, 14.6023], [121.0873, 14.6250] ]] } },
+            { "type": "Feature", "properties": { "name": "Muntinlupa" }, "geometry": { "type": "Polygon", "coordinates": [[ [121.0372, 14.3960], [121.0492, 14.3837], [121.0579, 14.3745], [121.0654, 14.3664], [121.0372, 14.3960] ]] } }
+        ]
+    };
+
+    // Add the GeoJSON layer to the map
+    L.geoJSON(metroManilaGeoJSON).addTo(map);
+
+    // Add Routing feature (basic example)
+    var control = L.Routing.control({
+        waypoints: [
+            L.latLng(14.5995, 120.9842),  // Sample start (Manila)
+            L.latLng(14.6749, 121.0551)   // Sample end (Quezon City)
+        ],
+        routeWhileDragging: true
+    }).addTo(map);
+
+</script>
+
+</body>
+</html>
